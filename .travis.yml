@@ -1,0 +1,25 @@
+language: generic
+sudo: required
+branches:
+  except:
+    - /^v[0-9]*/
+before_script:
+- sudo add-apt-repository ppa:koffeinflummi/armake -y
+- sudo apt-get update -y
+- sudo apt-get install armake -y
+script:
+- export VERSION=`cat description.ext  | grep -o 'onLoadName = ".*"' | grep -o 'v[0-9.][0-9.]*'`
+- armake build -w unquoted-string -w redefinition-wo-undef -w excessive-concatenation -x ".*" -x "*.pbo" -x "*.md" . 7Cav_FullSpectrum_$VERSION.sara.pbo
+- git tag $VERSION
+deploy:
+  if:
+    branch: master
+  provider: releases
+  skip_cleanup: true
+  file: '7Cav_FullSpectrum_$VERSION.sara.pbo'
+  on:
+    branch: master
+    repo: 7Cav/7Cav_FullSpectrum_V4.sara
+  name: '7th Cavalry Full Spectrum $VERSION - sara'
+  api_key:
+    secure: aAd8wd44fEpN2ARV5pkhOQTOrIymM4FWMQWMIQHWG/MzeqjW3K4Qw6xCwSOfxjg7jpAtvWyagx9ijutytGavvowrcTVRlPFovS5dvUOosDzPMLLu2cpeCxahhPC9zTe7mGMMZ1Tf1hpsg1UOb9CJMJH+vZ167QThQSOdxYiyyX8518HbQRA2jS9+WtlplLJutZ1j0p9dJNvWBwvHngtmtTdVUIFzYHLY+yOTuFV4wyRIEGrjMXHunOIZ2deb7KNEuuhhE88hqZM4sDSWy/hz3AGaknEWgnxoMRgrEMaznUCrWiPA8GiMiMQkpYopSLmHPoAIwAwh+biyNaGokCqAOXRf6ONbyVow/DyI413CGkKKdBC4wBU5+ZlVg/Msf6xG8ex3DuLZRMXsyd3xYZU8PtdeoETe27oajNhhbV49BK4sKLGelgCjQYF4B+e/q5AzS+hFUEO/DmLQFUirvUihlhYf5uxJtqx5SHaWthcRF/b2vPdAx1IuUlCwtaVEhRqcfJ55ZyZaF/Pm/hkf+YlgVJH7DuNiNYkvEL/K83EgHfaRO6gam85muxs8TVgwDzZFdzd6zQ695hPxm8s+qcSU7IYFlLHQn5qp7c2Yxud/cz5t1Yj+0kdD7H491fYsbkjO/tERkxwbOf2m0rBzr5z/eYSvuEfMWrSXiAiMYRqPztg=
